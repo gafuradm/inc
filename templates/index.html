@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .user-status {
+            margin-bottom: 20px;
+        }
+        .event-list {
+            margin-top: 20px;
+            list-style: none;
+            padding: 0;
+        }
+        .event-item {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .event-item h2 {
+            margin: 0;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        .event-item p {
+            margin: 0;
+            color: #666;
+        }
+        .event-item a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .event-item a:hover {
+            text-decoration: underline;
+        }
+        .auth-links {
+            margin-bottom: 20px;
+        }
+        .auth-links a {
+            margin-right: 10px;
+            text-decoration: none;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="auth-links">
+            <a href="/register">Регистрация</a>
+            <a href="/login">Вход</a>
+        </div>
+        <div class="user-status">
+            {% if current_user.is_authenticated %}
+                <p>Пользователь аутентифицирован</p>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <p>Пользователь не аутентифицирован</p>
+            {% endif %}
+        </div>
+        <h1>Events</h1>
+        <p>
+            {% if current_user.is_authenticated %}
+                Добро пожаловать!
+            {% else %}
+                Добро пожаловать, гость! Пожалуйста, <a href="/login">авторизуйтесь</a>, чтобы иметь возможность бронировать билеты на мероприятия.
+            {% endif %}
+        </p>
+        <h2>Ваши бронирования</h2>
+        <ul>
+        {% for booking in user_bookings %}
+        <li>
+            Количество билетов: {{ booking['num_tickets'] }},
+            Ссылка на мероприятие: {{ booking['event_url'] }}
+            <form action="{{ url_for('cancel_booking_route', booking_id=booking['_id']) }}" method="post">
+                <button type="submit">Отменить бронирование</button>
+            </form>
+        </li>
+        {% endfor %}
+        </ul>
+        </ul>
+        <h2>Список мероприятий</h2>
+        <ul class="event-list">
+            {% for event in events %}
+                <li class="event-item">
+                    <h2>{{ event.title }}</h2>
+                    <p>{{ event.info }}</p>
+                    <a href="{{ url_for('event_details', event_url=event.url) }}">Подробности</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

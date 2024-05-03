@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ event.title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .user-status {
+            margin-bottom: 20px;
+        }
+        .event-details {
+            margin-bottom: 20px;
+        }
+        .event-details strong {
+            font-weight: bold;
+        }
+        .form-container {
+            margin-top: 20px;
+        }
+        .form-container input[type="number"] {
+            width: 60px;
+        }
+        .form-container button {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="user-status">
+            {% if current_user.is_authenticated %}
+                <p>Пользователь аутентифицирован: {{ current_user.email }}</p>
+            {% else %}
+                <p>Пользователь не аутентифицирован</p>
+            {% endif %}
+        </div>
+        <h1>{{ event.title }}</h1>
+        <div class="event-details">
+            <p><strong>Место проведения:</strong> {{ event.location }}</p>
+            <p><strong>Дата:</strong> {{ event.date }}</p>
+            <p><strong>Описание:</strong> {{ event.desc }}</p>
+            <p><strong>Дата публикации:</strong> {{ event.public}}</p>
+        </div>
+        <div class="form-container">
+            {% if current_user.is_authenticated %}
+            <form action="{{ url_for('book_tickets_route') }}" method="post">
+                <input type="number" name="num_tickets" value="1">
+                <input type="hidden" name="event_url" value="{{ event.event_details_url }}">
+                <button type="submit">Book Tickets</button>
+            </form>                                           
+            {% else %}
+                <p>Please <a href="{{ url_for('login') }}">login</a> to book tickets for this event.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
